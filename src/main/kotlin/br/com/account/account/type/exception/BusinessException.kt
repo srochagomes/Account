@@ -1,4 +1,4 @@
-package br.com.account.account.types.exceptions
+package br.com.account.account.type.exception
 
 import java.lang.RuntimeException
 

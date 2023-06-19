@@ -1,7 +1,28 @@
 package br.com.account.account.domain.aggregate
 
-import br.com.account.account.domain.datavalue.AccountKey
 
-data class Account (var key: AccountKey){
+import br.com.account.account.domain.datavalue.AccountStatus
+import jakarta.persistence.*
+import java.time.LocalDateTime
+import java.util.*
 
-}
+@Entity
+@Table(name = "TB_ACCOUNT")
+data class Account (
+    @Id
+    @Column(name = "ID_KEY")
+    private val key: UUID = UUID.randomUUID(),
+    @Column(name = "ID_APPLICATION")
+    val application:String,
+    @Column(name = "ID_USER_OWNER")
+    val userNameOwner: String,
+    @Column(name = "DS_EMAIL")
+    val email: String,
+    @Column(name = "FL_TERM_ACCEPT")
+    val termAccept: Boolean,
+    @Column(name = "DT_HR_CREATED")
+    val dateCreated: LocalDateTime = LocalDateTime.now(),
+    @Column(name = "EN_STATUS")
+    @Enumerated(EnumType.STRING)
+    val status: AccountStatus
+)

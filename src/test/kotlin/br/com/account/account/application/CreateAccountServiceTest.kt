@@ -1,50 +1,72 @@
 package br.com.account.account.application
 
 import br.com.account.account.domain.aggregate.Account
-import br.com.account.account.domain.datavalue.AccountKey
-
-import br.com.account.account.infrastructure.dto.AccountNewDTO
+import br.com.account.account.domain.datavalue.AccountStatus
+import br.com.account.account.domain.datavalue.UserStatus
+import br.com.account.account.domain.entity.User
+import br.com.account.account.infrastructure.dto.entry.AccountNewEntry
 import br.com.account.account.infrastructure.out.database.repository.AccountRepository
-import br.com.account.account.types.exceptions.BusinessException
+import br.com.account.account.infrastructure.out.database.repository.UserRepository
+import br.com.account.account.type.exception.BusinessException
 import io.mockk.every
-
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 
 internal class CreateAccountServiceTest{
     val accountRepository:AccountRepository = mockk()
-    val createAccountService = CreateAccountService(accountRepository)
+    val userRepository: UserRepository= mockk()
+    val createAccountService = CreateAccountService(accountRepository, userRepository)
 
     @Test
     fun `deve lançar um erro quando o usuário já possui uma conta cadastrada com a mesma aplicação e username`() {
-        val accountNewDTO = AccountNewDTO( "","",true)
-        every { accountRepository.findById(any())} returns Optional.of(Account(AccountKey("","")))
+        val accountNewDTO = AccountNewEntry( "","","",true)
+        val email = "antronio@gmail.com"
+        every { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())} returns Optional.of(
+            Account(
+                application =  "1234",
+                userNameOwner = email,
+                email =  email,
+                termAccept = true,
+                status = AccountStatus.ACTIVATED))
 
         val actual = assertThrows<BusinessException> {
             createAccountService.applyTo(accountNewDTO)
         }
-        verify(exactly = 1) { accountRepository.findById(any()) }
+        verify(exactly = 1) { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any()) }
         verify(exactly = 0) { accountRepository.save(any()) }
+        verify(exactly = 0) { userRepository.save(any()) }
 
         assertThat(actual.message).isEqualTo("Account already created")
     }
 
     @Test
     fun `deve criar uma conta quando a aplicação e o usuário não está registrado`() {
-        val accountNewDTO = AccountNewDTO( "","",true)
-        every { accountRepository.findById(any())} returns Optional.empty()
-        every { accountRepository.save(any())} returns Account(AccountKey("",""))
+        val accountNewDTO = AccountNewEntry( "","","",true)
+        val email = "antronio@gmail.com"
+        val accountCreated = Account(
+            application =  "1234",
+            userNameOwner = email,
+            email =  email,
+            termAccept = true,
+            status = AccountStatus.ACTIVATED)
+
+        every { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())} returns Optional.empty()
+        every { accountRepository.save(any())} returns accountCreated
+        every { userRepository.save(any())} returns User(email="", account = accountCreated, emailVerified = false, status=UserStatus.BLOCKED)
 
 
-        createAccountService.applyTo(accountNewDTO)
+        val accountCreatedView = createAccountService.applyTo(accountNewDTO)
 
-        verify(exactly = 1) { accountRepository.findById(any()) }
+        verify(exactly = 1) { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())}
         verify(exactly = 1) { accountRepository.save(any()) }
+        assertThat(accountCreatedView).isNotNull
+        assertThat(accountCreatedView.application).isEqualTo("1234")
+        assertThat(accountCreatedView.username).isEqualTo(email)
     }
 
 }

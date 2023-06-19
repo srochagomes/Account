@@ -1,1 +1,24 @@
+spring:
+  mandatory-file-encoding: UTF-8
+  profiles:
+    active: ${PROFILE:dev}
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/account
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+flyway:
+  enabled: true
+  url: jdbc:postgresql://localhost:5432/account
+  schemas: public
+  username: postgres
+  password: admin
+  locations: classpath:db/migration
