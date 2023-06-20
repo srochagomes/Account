@@ -11,12 +11,16 @@ import br.com.account.account.infrastructure.out.database.repository.AccountRepo
 import br.com.account.account.infrastructure.out.database.repository.UserRepository
 import br.com.account.account.type.exception.BusinessException
 import br.com.account.account.type.mapper.AccountCreatedViewMapper
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
+@Service
 class CreateAccountService(
     private val accountRepository: AccountRepository,
     private val userRepository: UserRepository
 ) {
 
+    @Transactional
     fun applyTo(accountNewDTO: AccountNewEntry): AccountCreatedView {
 
         val accountFount = accountRepository.findAccountByApplicationAndUserNameOwner(accountNewDTO.application, accountNewDTO.username)
@@ -34,12 +38,18 @@ class CreateAccountService(
         );
 
         val accountCreated = accountRepository.save(accountNew);
-        val userNew = User(
-            status = UserStatus.BLOCKED,
-            email = accountCreated.email,
-            emailVerified = false,
-            account = accountCreated
-        )
+        val userNew = accountCreated.let{ account ->
+            User(
+                status = UserStatus.BLOCKED,
+                email = account.email,
+                emailVerified = false,
+                account = account,
+                termAccept = account.termAccept
+            )
+        }
+
+
+
 
         val userCreated = userRepository.save(userNew)
 

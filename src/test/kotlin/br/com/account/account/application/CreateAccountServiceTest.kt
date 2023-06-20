@@ -57,7 +57,7 @@ internal class CreateAccountServiceTest{
 
         every { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())} returns Optional.empty()
         every { accountRepository.save(any())} returns accountCreated
-        every { userRepository.save(any())} returns User(email="", account = accountCreated, emailVerified = false, status=UserStatus.BLOCKED)
+        every { userRepository.save(any())} returns User(email="", account = accountCreated, emailVerified = false, status=UserStatus.BLOCKED, termAccept = true)
 
 
         val accountCreatedView = createAccountService.applyTo(accountNewDTO)

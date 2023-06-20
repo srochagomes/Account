@@ -11,7 +11,7 @@ import java.util.*
 data class Account (
     @Id
     @Column(name = "ID_KEY")
-    private val key: UUID = UUID.randomUUID(),
+    val key: UUID = UUID.randomUUID(),
     @Column(name = "ID_APPLICATION")
     val application:String,
     @Column(name = "ID_USER_OWNER")

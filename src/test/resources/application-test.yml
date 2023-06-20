@@ -1,4 +1,6 @@
 spring:
+  web:
+    locale: pt_BR
   profiles:
     active: test
   datasource:
