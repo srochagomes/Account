@@ -53,8 +53,8 @@ class CreateAccountControllerTest{
             status { isBadRequest() }
         }
 
-        assertThat(andExpect.andReturn().response.contentAsString)
-            .contains("\"message\":\"{application=must not be empty, email=size must be between 5 and 100, username=size must be between 5 and 100}\",\"path\":\"\"")
+        assertThat(andExpect.andReturn().response.contentAsByteArray.toString(Charsets.UTF_8))
+            .contains("{application=Não deve ser nulo, email=Não deve ser nulo, username=Não deve ser nulo}\",\"path\":\"\"")
     }
 
     @Test
