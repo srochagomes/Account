@@ -4,7 +4,15 @@ springdoc:
   swagger-ui:
     use-root-path: false
     path: /docs/swagger-ui.html
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      base-path: /_app-state
+  endpoint:
+    health:
+      show-details: always
 spring:
   profiles:
     active: ${PROFILE:dev}

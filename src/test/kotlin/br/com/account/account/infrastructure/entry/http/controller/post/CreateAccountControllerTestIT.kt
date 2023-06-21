@@ -1,23 +1,23 @@
 package br.com.account.account.infrastructure.entry.http.controller.post
 
-import br.com.account.account.infrastructure.dto.entry.AccountNewEntry
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import java.util.UUID
-import java.util.function.Predicate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CreateAccountControllerTest{
+@TestPropertySource("classpath:application-test.yml")
+@ActiveProfiles("test")
+class CreateAccountControllerTestIT{
 
     @Autowired
     private lateinit var webApplicationContext: WebApplicationContext
