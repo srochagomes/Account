@@ -1,3 +1,7 @@
+
+jdbc_url: ${DB_JDBC:jdbc:postgresql://172.17.0.1:5432/account}
+user_db: ${DB_USER:postgres}
+pass_db: ${DB_PASSWORD:admin}
 springdoc:
   api-docs:
     path: /docs
@@ -5,6 +9,11 @@ springdoc:
     use-root-path: false
     path: /docs/swagger-ui.html
 management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
   endpoints:
     web:
       exposure:
@@ -13,14 +22,17 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        add-additional-paths: true
+        enabled: true
 spring:
   profiles:
     active: ${PROFILE:dev}
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/account
-    username: postgres
-    password: admin
+    url: ${jdbc_url}
+    username: ${user_db}
+    password: ${pass_db}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -32,10 +44,10 @@ spring:
 
 flyway:
   enabled: true
-  url: jdbc:postgresql://localhost:5432/account
+  url: ${jdbc_url}
   schemas: public
-  username: postgres
-  password: admin
+  username: ${user_db}
+  password: ${pass_db}
   locations: classpath:db/migration
 server:
   servlet:
