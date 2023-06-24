@@ -2,6 +2,7 @@
 jdbc_url: ${DB_JDBC:jdbc:postgresql://172.17.0.1:5432/account}
 user_db: ${DB_USER:postgres}
 pass_db: ${DB_PASSWORD:admin}
+
 springdoc:
   api-docs:
     path: /docs
@@ -25,11 +26,18 @@ management:
       probes:
         add-additional-paths: true
         enabled: true
+  server:
+    port: 8081
+
 spring:
   profiles:
     active: ${PROFILE:dev}
 
   datasource:
+    testWhileIdle: true
+    testOnBorrow: true
+    timeBetweenEvictionRunsMillis: 3600000
+    validationQuery: SELECT 1
     url: ${jdbc_url}
     username: ${user_db}
     password: ${pass_db}
@@ -50,9 +58,12 @@ flyway:
   password: ${pass_db}
   locations: classpath:db/migration
 server:
+  port: ${PORT:8888}
   servlet:
     encoding:
       charset: UTF-8
       enabled: true
+
+
 
 
