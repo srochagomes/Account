@@ -1,12 +1,13 @@
 package br.com.account.account.application
 
+import br.com.account.account.config.EventPublisher
 import br.com.account.account.domain.aggregate.Account
 import br.com.account.account.domain.datavalue.AccountStatus
 import br.com.account.account.domain.datavalue.UserStatus
 import br.com.account.account.domain.entity.User
 import br.com.account.account.infrastructure.dto.entry.AccountNewEntry
-import br.com.account.account.infrastructure.out.database.repository.AccountRepository
-import br.com.account.account.infrastructure.out.database.repository.UserRepository
+import br.com.account.account.infrastructure.out.database.AccountRepository
+import br.com.account.account.infrastructure.out.database.UserRepository
 import br.com.account.account.type.exception.BusinessException
 import io.mockk.every
 import io.mockk.mockk
@@ -18,9 +19,10 @@ import java.util.*
 
 
 internal class CreateAccountServiceTest{
-    val accountRepository:AccountRepository = mockk()
-    val userRepository: UserRepository= mockk()
-    val createAccountService = CreateAccountService(accountRepository, userRepository)
+    val accountRepository: AccountRepository = mockk()
+    val userRepository: UserRepository = mockk()
+    val eventPublisher: EventPublisher = mockk()
+    val createAccountService = CreateAccountService(accountRepository, userRepository, eventPublisher)
 
     @Test
     fun `deve lançar um erro quando o usuário já possui uma conta cadastrada com a mesma aplicação e username`() {
@@ -58,12 +60,14 @@ internal class CreateAccountServiceTest{
         every { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())} returns Optional.empty()
         every { accountRepository.save(any())} returns accountCreated
         every { userRepository.save(any())} returns User(email="", account = accountCreated, emailVerified = false, status=UserStatus.BLOCKED, termAccept = true)
+        every { eventPublisher.with(any())} returns Unit
 
 
         val accountCreatedView = createAccountService.applyTo(accountNewDTO)
 
         verify(exactly = 1) { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())}
         verify(exactly = 1) { accountRepository.save(any()) }
+        verify(exactly = 2) { eventPublisher.with(any()) }
         assertThat(accountCreatedView).isNotNull
         assertThat(accountCreatedView.application).isEqualTo("1234")
         assertThat(accountCreatedView.username).isEqualTo(email)

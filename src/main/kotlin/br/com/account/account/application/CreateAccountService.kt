@@ -1,14 +1,16 @@
 package br.com.account.account.application
 
+import br.com.account.account.config.EventPublisher
 import br.com.account.account.domain.aggregate.Account
-
 import br.com.account.account.domain.datavalue.AccountStatus
 import br.com.account.account.domain.datavalue.UserStatus
 import br.com.account.account.domain.entity.User
 import br.com.account.account.infrastructure.dto.entry.AccountNewEntry
 import br.com.account.account.infrastructure.dto.view.AccountCreatedView
-import br.com.account.account.infrastructure.out.database.repository.AccountRepository
-import br.com.account.account.infrastructure.out.database.repository.UserRepository
+import br.com.account.account.infrastructure.event.AccountCreatedEvent
+import br.com.account.account.infrastructure.event.UserCreatedEvent
+import br.com.account.account.infrastructure.out.database.AccountRepository
+import br.com.account.account.infrastructure.out.database.UserRepository
 import br.com.account.account.type.exception.BusinessException
 import br.com.account.account.type.mapper.AccountCreatedViewMapper
 import org.springframework.stereotype.Service
@@ -17,10 +19,11 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class CreateAccountService(
     private val accountRepository: AccountRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val eventPublisher: EventPublisher
 ) {
 
-    @Transactional
+    @Transactional(rollbackFor = [Throwable::class])
     fun applyTo(accountNewDTO: AccountNewEntry): AccountCreatedView {
 
         val accountFount = accountRepository.findAccountByApplicationAndUserNameOwner(accountNewDTO.application, accountNewDTO.username)
@@ -52,6 +55,9 @@ class CreateAccountService(
 
 
         val userCreated = userRepository.save(userNew)
+
+        eventPublisher.with(AccountCreatedEvent(this,accountCreated))
+        eventPublisher.with(UserCreatedEvent(this,userCreated))
 
         return AccountCreatedViewMapper().from(accountCreated)
 

@@ -1,4 +1,4 @@
-package br.com.account.account.infrastructure.out.database.repository
+package br.com.account.account.infrastructure.out.database
 
 import br.com.account.account.domain.aggregate.Account
 

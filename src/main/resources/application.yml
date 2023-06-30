@@ -29,6 +29,8 @@ management:
   server:
     port: 8081
 
+
+
 spring:
   profiles:
     active: ${PROFILE:dev}
@@ -50,6 +52,27 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 
+
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: api
+    password: api@user
+    dynamic: true
+    listener:
+      simple:
+        prefetch: 100
+
+camel:
+  springboot:
+    auto-startup: true
+    consumer-template-cache-size: 10
+    producer-template-cache-size: 10
+    main-run-controller: true
+    name: AccountCamel
+  component:
+    spring-rabbitmq:
+      auto-declare: true
 flyway:
   enabled: true
   url: ${jdbc_url}
@@ -65,5 +88,14 @@ server:
       enabled: true
 
 
-
-
+events:
+  origin:
+    account-created: direct:accountCreated
+    user-created: direct:userCreated
+  destiny:
+    rabbit-mq:
+      account-created: spring-rabbitmq:account?routingKey=event.account.created&exchangeType=topic&autoDeclare=true
+      user-created: spring-rabbitmq:account?routingKey=event.user.created&exchangeType=topic&autoDeclare=true
+logging:
+  level:
+    root: INFO

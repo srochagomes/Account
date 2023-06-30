@@ -1,6 +1,11 @@
 package br.com.account.account.config
 
 
+import org.apache.camel.CamelContext
+import org.apache.camel.ConsumerTemplate
+import org.apache.camel.ProducerTemplate
+import org.apache.camel.spring.boot.CamelContextConfiguration
+import org.apache.camel.spring.boot.SpringBootCamelContext
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -35,4 +40,7 @@ class ApplicationConfig {
         lci.paramName = "lang";
         return lci;
     }
+
+
+
 }
