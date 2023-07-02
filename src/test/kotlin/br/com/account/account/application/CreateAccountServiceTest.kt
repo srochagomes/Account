@@ -59,7 +59,7 @@ internal class CreateAccountServiceTest{
 
         every { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())} returns Optional.empty()
         every { accountRepository.save(any())} returns accountCreated
-        every { userRepository.save(any())} returns User(email="", account = accountCreated, emailVerified = false, status=UserStatus.BLOCKED, termAccept = true)
+        every { userRepository.save(any())} returns User(name="",email="", account = accountCreated, emailVerified = false, status=UserStatus.BLOCKED, termAccept = true)
         every { eventPublisher.with(any())} returns Unit
 
 

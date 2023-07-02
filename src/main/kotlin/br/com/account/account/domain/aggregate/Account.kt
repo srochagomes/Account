@@ -2,6 +2,7 @@ package br.com.account.account.domain.aggregate
 
 
 import br.com.account.account.domain.datavalue.AccountStatus
+import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.persistence.*
 import java.time.LocalDateTime
 import java.util.*
@@ -21,6 +22,7 @@ data class Account (
     @Column(name = "FL_TERM_ACCEPT")
     val termAccept: Boolean,
     @Column(name = "DT_HR_CREATED")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Sao_Paulo")
     val dateCreated: LocalDateTime = LocalDateTime.now(),
     @Column(name = "EN_STATUS")
     @Enumerated(EnumType.STRING)

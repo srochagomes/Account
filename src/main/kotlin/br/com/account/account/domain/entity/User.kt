@@ -2,6 +2,7 @@ package br.com.account.account.domain.entity
 
 import br.com.account.account.domain.aggregate.Account
 import br.com.account.account.domain.datavalue.UserStatus
+import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.persistence.*
 import java.time.LocalDateTime
 import java.util.UUID
@@ -16,10 +17,12 @@ data class User(
     @JoinColumn(name = "ID_ACCOUNT")
     val account: Account,
     @Column(name = "DT_HR_CREATED")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "America/Sao_Paulo")
     val dateCreated : LocalDateTime = LocalDateTime.now(),
     @Column(name = "DS_EMAIL")
     val email: String,
-
+    @Column(name = "NM_USER")
+    val name: String,
     @Column(name = "FL_TERM_ACCEPT")
     val termAccept: Boolean,
 

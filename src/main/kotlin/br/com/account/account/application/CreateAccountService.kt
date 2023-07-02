@@ -26,7 +26,7 @@ class CreateAccountService(
     @Transactional(rollbackFor = [Throwable::class])
     fun applyTo(accountNewDTO: AccountNewEntry): AccountCreatedView {
 
-        val accountFount = accountRepository.findAccountByApplicationAndUserNameOwner(accountNewDTO.application, accountNewDTO.username)
+        val accountFount = accountRepository.findAccountByApplicationAndUserNameOwner(accountNewDTO.application, accountNewDTO.email)
 
         accountFount.ifPresent{
             throw BusinessException("Account already created")
@@ -34,7 +34,7 @@ class CreateAccountService(
 
         val accountNew = Account(
             application=accountNewDTO.application,
-            userNameOwner=accountNewDTO.username,
+            userNameOwner=accountNewDTO.email,
             email = accountNewDTO.email,
             termAccept = accountNewDTO.termAccept,
             status = AccountStatus.NOT_VALIDATED
@@ -47,6 +47,7 @@ class CreateAccountService(
                 email = account.email,
                 emailVerified = false,
                 account = account,
+                name = accountNewDTO.name,
                 termAccept = account.termAccept
             )
         }
