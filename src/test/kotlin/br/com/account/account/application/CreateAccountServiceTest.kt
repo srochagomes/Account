@@ -28,10 +28,10 @@ internal class CreateAccountServiceTest{
     fun `deve lançar um erro quando o usuário já possui uma conta cadastrada com a mesma aplicação e username`() {
         val accountNewDTO = AccountNewEntry( "","","",true)
         val email = "antronio@gmail.com"
-        every { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())} returns Optional.of(
+        every { accountRepository.findAccountByApplicationAndEmail(any(),any())} returns Optional.of(
             Account(
                 application =  "1234",
-                userNameOwner = email,
+                userOwnerKey = UUID.randomUUID(),
                 email =  email,
                 termAccept = true,
                 status = AccountStatus.ACTIVATED))
@@ -39,7 +39,7 @@ internal class CreateAccountServiceTest{
         val actual = assertThrows<BusinessException> {
             createAccountService.applyTo(accountNewDTO)
         }
-        verify(exactly = 1) { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any()) }
+        verify(exactly = 1) { accountRepository.findAccountByApplicationAndEmail(any(),any()) }
         verify(exactly = 0) { accountRepository.save(any()) }
         verify(exactly = 0) { userRepository.save(any()) }
 
@@ -52,12 +52,12 @@ internal class CreateAccountServiceTest{
         val email = "antronio@gmail.com"
         val accountCreated = Account(
             application =  "1234",
-            userNameOwner = email,
+            userOwnerKey = UUID.randomUUID(),
             email =  email,
             termAccept = true,
             status = AccountStatus.ACTIVATED)
 
-        every { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())} returns Optional.empty()
+        every { accountRepository.findAccountByApplicationAndEmail(any(),any())} returns Optional.empty()
         every { accountRepository.save(any())} returns accountCreated
         every { userRepository.save(any())} returns User(name="",email="", account = accountCreated, emailVerified = false, status=UserStatus.BLOCKED, termAccept = true)
         every { eventPublisher.with(any())} returns Unit
@@ -65,12 +65,12 @@ internal class CreateAccountServiceTest{
 
         val accountCreatedView = createAccountService.applyTo(accountNewDTO)
 
-        verify(exactly = 1) { accountRepository.findAccountByApplicationAndUserNameOwner(any(),any())}
+        verify(exactly = 1) { accountRepository.findAccountByApplicationAndEmail(any(),any())}
         verify(exactly = 1) { accountRepository.save(any()) }
         verify(exactly = 2) { eventPublisher.with(any()) }
         assertThat(accountCreatedView).isNotNull
         assertThat(accountCreatedView.application).isEqualTo("1234")
-        assertThat(accountCreatedView.username).isEqualTo(email)
+
     }
 
 }

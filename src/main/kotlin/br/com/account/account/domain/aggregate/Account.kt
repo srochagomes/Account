@@ -15,8 +15,8 @@ data class Account (
     val key: UUID = UUID.randomUUID(),
     @Column(name = "ID_APPLICATION")
     val application:String,
-    @Column(name = "ID_USER_OWNER")
-    val userNameOwner: String,
+    @Column(name = "ID_KEY_USER_OWNER")
+    var userOwnerKey: UUID,
     @Column(name = "DS_EMAIL")
     val email: String,
     @Column(name = "FL_TERM_ACCEPT")

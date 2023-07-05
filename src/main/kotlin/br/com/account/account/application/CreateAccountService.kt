@@ -15,6 +15,7 @@ import br.com.account.account.type.exception.BusinessException
 import br.com.account.account.type.mapper.AccountCreatedViewMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Service
 class CreateAccountService(
@@ -26,15 +27,15 @@ class CreateAccountService(
     @Transactional(rollbackFor = [Throwable::class])
     fun applyTo(accountNewDTO: AccountNewEntry): AccountCreatedView {
 
-        val accountFount = accountRepository.findAccountByApplicationAndUserNameOwner(accountNewDTO.application, accountNewDTO.email)
+        val accountFount = accountRepository.findAccountByApplicationAndEmail(accountNewDTO.application, accountNewDTO.email)
 
         accountFount.ifPresent{
             throw BusinessException("Account already created")
         }
-
+        val keyUser = UUID.randomUUID();
         val accountNew = Account(
             application=accountNewDTO.application,
-            userNameOwner=accountNewDTO.email,
+            userOwnerKey=keyUser,
             email = accountNewDTO.email,
             termAccept = accountNewDTO.termAccept,
             status = AccountStatus.NOT_VALIDATED
@@ -43,6 +44,7 @@ class CreateAccountService(
         val accountCreated = accountRepository.save(accountNew);
         val userNew = accountCreated.let{ account ->
             User(
+                key = keyUser,
                 status = UserStatus.BLOCKED,
                 email = account.email,
                 emailVerified = false,

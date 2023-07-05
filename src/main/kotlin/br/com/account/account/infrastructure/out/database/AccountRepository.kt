@@ -8,7 +8,7 @@ import java.util.UUID
 
 interface AccountRepository : JpaRepository<Account, UUID> {
 
-    fun findAccountByApplicationAndUserNameOwner(application:String, userOwner:String):Optional<Account>
+    fun findAccountByApplicationAndEmail(application:String, userOwner:String):Optional<Account>
 
 
 }
