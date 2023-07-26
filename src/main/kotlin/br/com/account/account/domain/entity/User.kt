@@ -1,6 +1,7 @@
 package br.com.account.account.domain.entity
 
 import br.com.account.account.domain.aggregate.Account
+import br.com.account.account.domain.datavalue.AccountStatus
 import br.com.account.account.domain.datavalue.UserStatus
 import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.persistence.*
@@ -31,5 +32,11 @@ data class User(
 
     @Column(name = "EN_STATUS")
     @Enumerated(EnumType.STRING)
-    val status: UserStatus
-)
+    var status: UserStatus
+){
+    fun activeAccount(){
+        this.status = UserStatus.ACTIVED
+        this.account.status = AccountStatus.ACTIVATED
+    }
+}
+

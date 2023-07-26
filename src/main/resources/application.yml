@@ -88,11 +88,32 @@ server:
       charset: UTF-8
       enabled: true
 
-
+good-pratices-account:
+  user:
+    confirm-email: "\
+      &deadLetterExchange=auth\
+      &deadLetterExchangeType=topic\
+      &deadLetterQueue=account.user.confirm-email-dlq\
+      &deadLetterRoutingKey=event.user-access-confirmed-dlq\
+      &maximumRetryAttempts=3\
+      &retryDelay=2000\
+      &concurrentConsumers=3\
+      &maxConcurrentConsumers=3\
+      &prefetchCount=100\
+    "
 events:
   origin:
     account-created: direct:accountCreated
     user-created: direct:userCreated
+    user-access-confirm-email: "\
+                                  spring-rabbitmq:auth?\
+                                  queues=account.user.confirm-email\
+                                  &routingKey=event.user-access-confirmed\
+                                  &exchangeType=topic\
+                                  &autoDeclare=true\
+                                  ${good-pratices-account.user.confirm-email}\
+                              "
+
   destiny:
     rabbit-mq:
       account-created: spring-rabbitmq:account?routingKey=event.account.created&exchangeType=topic&autoDeclare=true

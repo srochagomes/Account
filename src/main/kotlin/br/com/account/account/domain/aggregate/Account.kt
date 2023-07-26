@@ -26,5 +26,5 @@ data class Account (
     val dateCreated: LocalDateTime = LocalDateTime.now(),
     @Column(name = "EN_STATUS")
     @Enumerated(EnumType.STRING)
-    val status: AccountStatus
+    var status: AccountStatus
 )

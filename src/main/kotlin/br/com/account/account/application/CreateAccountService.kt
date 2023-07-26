@@ -27,9 +27,9 @@ class CreateAccountService(
     @Transactional(rollbackFor = [Throwable::class])
     fun applyTo(accountNewDTO: AccountNewEntry): AccountCreatedView {
 
-        val accountFount = accountRepository.findAccountByApplicationAndEmail(accountNewDTO.application, accountNewDTO.email)
+        val accountFound = accountRepository.findAccountByApplicationAndEmail(accountNewDTO.application, accountNewDTO.email)
 
-        accountFount.ifPresent{
+        accountFound.ifPresent{
             throw BusinessException("Account already created")
         }
         val keyUser = UUID.randomUUID();
