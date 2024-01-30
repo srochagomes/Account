@@ -50,7 +50,9 @@ class CreateAccountService(
                 emailVerified = false,
                 account = account,
                 name = accountNewDTO.name,
-                termAccept = account.termAccept
+                termAccept = account.termAccept,
+                phone = accountNewDTO.phone,
+                dateBirth = accountNewDTO.dateBirth
             )
         }
 

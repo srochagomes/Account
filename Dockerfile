@@ -1,12 +1,8 @@
-# build stage
-FROM maven:3.8.5-openjdk-17 AS build
-COPY src /home/app/src
-COPY pom.xml /home/app
-RUN mvn -f /home/app/pom.xml clean package
+FROM openjdk:21-jdk-slim-buster
 
-# package stage
-FROM openjdk:17-jdk-slim-buster
-ARG JAR_FILE=/home/app/target/*.jar
-COPY --from=build ${JAR_FILE} app.jar
+ARG NOME_ARQUIVO_JAR
+ENV FILE_JAR=$NOME_ARQUIVO_JAR
+COPY target/$FILE_JAR /app/app.jar
+WORKDIR /app
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

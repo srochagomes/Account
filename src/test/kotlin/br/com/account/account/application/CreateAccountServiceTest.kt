@@ -15,6 +15,7 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 import java.util.*
 
 
@@ -26,7 +27,7 @@ internal class CreateAccountServiceTest{
 
     @Test
     fun `deve lançar um erro quando o usuário já possui uma conta cadastrada com a mesma aplicação e username`() {
-        val accountNewDTO = AccountNewEntry( "","","",true)
+        val accountNewDTO = AccountNewEntry( "","","","", LocalDate.now(),"",true)
         val email = "antronio@gmail.com"
         every { accountRepository.findAccountByApplicationAndEmail(any(),any())} returns Optional.of(
             Account(
@@ -48,7 +49,7 @@ internal class CreateAccountServiceTest{
 
     @Test
     fun `deve criar uma conta quando a aplicação e o usuário não está registrado`() {
-        val accountNewDTO = AccountNewEntry( "","","",true)
+        val accountNewDTO = AccountNewEntry( "","","","", LocalDate.now(),"",true)
         val email = "antronio@gmail.com"
         val accountCreated = Account(
             application =  "1234",
@@ -59,7 +60,7 @@ internal class CreateAccountServiceTest{
 
         every { accountRepository.findAccountByApplicationAndEmail(any(),any())} returns Optional.empty()
         every { accountRepository.save(any())} returns accountCreated
-        every { userRepository.save(any())} returns User(name="",email="", account = accountCreated, emailVerified = false, status=UserStatus.BLOCKED, termAccept = true)
+        every { userRepository.save(any())} returns User(name="",email="", account = accountCreated, emailVerified = false, status=UserStatus.BLOCKED, phone = "", termAccept = true, dateBirth = LocalDate.now())
         every { eventPublisher.with(any())} returns Unit
 
 

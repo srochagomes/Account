@@ -54,7 +54,7 @@ class CreateAccountControllerTestIT{
         }
 
         assertThat(andExpect.andReturn().response.contentAsByteArray.toString(Charsets.UTF_8))
-            .contains("{application=Não deve ser nulo, name=Não deve ser nulo, email=Não deve ser nulo}\",\"path\":\"\"")
+            .contains("{application=Não deve ser nulo, name=Não deve ser nulo, dateBirth=Não deve ser nulo, email=Não deve ser nulo}\",\"path\":\"\"")
     }
 
     @Test
@@ -65,7 +65,10 @@ class CreateAccountControllerTestIT{
                 "application": "$applicationId",
                 "email": "43434343",
                 "termAccept": "true",
-                "name": "2323232"
+                "name": "2323232",
+                "dateBirth": "21/04/2011",
+                "password":"abcdef",
+                "phone":"(11)9178-5454"
             }
         """.trimIndent()
         mockMvc.post(URI){

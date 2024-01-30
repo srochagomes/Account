@@ -1,9 +1,9 @@
 
-jdbc_url: ${DB_JDBC:jdbc:postgresql://172.17.0.1:5432/account}
+jdbc_url: ${DB_JDBC:jdbc:postgresql://192.168.15.103:5432/account}
 user_db: ${DB_USER:postgres}
 pass_db: ${DB_PASSWORD:admin}
 
-host_rabbit: ${RABBIT_HOST:172.17.0.1}
+host_rabbit: ${RABBIT_HOST:192.168.15.103}
 user_rabbit: ${RABBIT_USER:api}
 pass_rabbit: ${RABBIT_PASSWORD:api@user}
 

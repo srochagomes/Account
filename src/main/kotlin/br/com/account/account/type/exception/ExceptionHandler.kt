@@ -4,6 +4,7 @@ import br.com.account.account.infrastructure.dto.view.ErrorView
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -55,6 +56,21 @@ class ExceptionHandler {
                 error = HttpStatus.BAD_REQUEST.name,
                 message = errorMessage.toString(),
                 path = request.servletPath
+        )
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleBodyNotReadable(
+        exception: HttpMessageNotReadableException,
+        request: HttpServletRequest
+    ): ErrorView {
+
+        return ErrorView(
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = HttpStatus.BAD_REQUEST.name,
+            message = exception.message,
+            path = request.servletPath
         )
     }
 

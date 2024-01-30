@@ -5,6 +5,7 @@ import br.com.account.account.domain.datavalue.AccountStatus
 import br.com.account.account.domain.datavalue.UserStatus
 import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.persistence.*
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -20,8 +21,13 @@ data class User(
     @Column(name = "DT_HR_CREATED")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "America/Sao_Paulo")
     val dateCreated : LocalDateTime = LocalDateTime.now(),
+    @Column(name = "DT_BIRTH")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "America/Sao_Paulo")
+    var dateBirth : LocalDate?,
     @Column(name = "DS_EMAIL")
     val email: String,
+    @Column(name = "DS_PHONE")
+    val phone: String,
     @Column(name = "NM_USER")
     val name: String,
     @Column(name = "FL_TERM_ACCEPT")
